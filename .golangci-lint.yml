@@ -1,0 +1,46 @@
+run:
+  timeout: 5m
+  tests: true
+
+linters-settings:
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+  revive:
+    rules:
+      - name: exported
+        disabled: false
+      - name: blank-imports
+        disabled: false
+      - name: error-naming
+        disabled: false
+      - name: error-strings
+        disabled: false
+  errcheck:
+    check-type-assertions: true
+    check-blank: false
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - revive
+    - goconst
+    - gocritic
+    - misspell
+    - unconvert
+
+issues:
+  exclude-dirs:
+    - docs
+    - bin
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - goconst
+        - errcheck
