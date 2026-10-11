@@ -28,7 +28,7 @@ func (h *CardHandler) ValidateCard(w http.ResponseWriter, r *http.Request) {
 	var req ValidateCardRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(NewErrorResponse(domain.ErrCodeMalformedPayload, "Incvalid request payload"))
+		_ = json.NewEncoder(w).Encode(NewErrorResponse(domain.ErrCodeMalformedPayload, "Invalid request payload"))
 		return
 	}
 	_, err := h.validator.Validate(req.CardNumber, req.ExpirationMonth, req.ExpirationYear)
