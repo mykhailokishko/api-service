@@ -14,8 +14,8 @@ import (
 )
 
 func TestCardHandler_ValidateCard(t *testing.T) {
-	// Фіксуємо час: 15 жовтня 2026 року
-	mockClock := domain.NewMockClock(time.Date(2026, 10, 15, 12, 0, 0, 0, time.UTC))
+	// Зафіксований час: 11 жовтня 2026 року
+	mockClock := domain.NewMockClock(time.Date(2026, 10, 11, 12, 0, 0, 0, time.UTC))
 	validator := service.NewValidator(mockClock)
 	handler := transporthttp.NewCardHandler(validator)
 
@@ -139,7 +139,7 @@ func TestCardHandler_RegisterRoutes(t *testing.T) {
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)
 
-	// Перевіряємо ендпоінт /validate
+	// Перевіряється ендпоінт /validate
 	req := httptest.NewRequest(http.MethodPost, "/validate", bytes.NewBufferString(`{"card_number":"4111111111111111","expiration_month":12,"expiration_year":2028}`))
 	rec := httptest.NewRecorder()
 	mux.ServeHTTP(rec, req)
@@ -148,7 +148,7 @@ func TestCardHandler_RegisterRoutes(t *testing.T) {
 		t.Errorf("/validate endpoint returned status %d, want 200", rec.Code)
 	}
 
-	// Перевіряємо альтернативний ендпоінт /api/v1/cards/validate
+	// Альтернативний ендпоінт /api/v1/cards/validate
 	reqV1 := httptest.NewRequest(http.MethodPost, "/api/v1/cards/validate", bytes.NewBufferString(`{"card_number":"4111111111111111","expiration_month":12,"expiration_year":2028}`))
 	recV1 := httptest.NewRecorder()
 	mux.ServeHTTP(recV1, reqV1)

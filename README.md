@@ -31,8 +31,7 @@ api-service/
 │   └── transport/
 │       └── http/                    # HTTP REST: Handlers, Request/Response DTO
 ├── pkg/
-│   └── luhn/                        # Чиста математична бібліотека Луна (0 allocs)
-├── docs/                            # Повна інженерна документація та лекції
+│   └── luhn/                        # Чиста математична бібліотека Луна (0 allocs) 
 ├── Dockerfile                       # Multi-stage production build
 ├── docker-compose.yml               # Однокомандний запуск
 ├── Makefile                         # Автоматизація збірки та тестів

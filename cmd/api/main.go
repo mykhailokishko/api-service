@@ -17,36 +17,36 @@ import (
 )
 
 func main() {
-	// 1. Ініціалізація структурованого логера JSON
+	// Ініціалізація структурованого логера JSON
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelInfo,
 	}))
 	slog.SetDefault(logger)
 
-	// 2. Читання порту із середовища (за замовчуванням 8080)
+	// Читання порту із середовища (за замовчуванням 8080)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	addr := fmt.Sprintf(":%s", port)
 
-	// 3. Composition Root: Dependency Injection
+	//Dependency Injection
 	clock := domain.NewRealClock()
 	validator := service.NewValidator(clock)
 	handler := transporthttp.NewCardHandler(validator)
 
-	// 4. Налаштування роутера
+	// Налаштування роутів
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)
 
-	// Health check ендпоінт для оркестраторів (Kubernetes / Docker)
+	// Health check ендпоінт
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{"status":"ok"}`))
 	})
 
-	// 5. Конфігурація HTTP сервера з таймаутами (захист від Slowloris атак)
+	// Конфігурація HTTP сервера з таймаутами
 	server := &http.Server{
 		Addr:              addr,
 		Handler:           mux,
@@ -56,7 +56,7 @@ func main() {
 		IdleTimeout:       120 * time.Second,
 	}
 
-	// 6. Запуск сервера у фоновій горутині
+	// Запуск сервера у фоновій горутині
 	serverErrors := make(chan error, 1)
 	go func() {
 		logger.Info("Starting HTTP server", slog.String("addr", addr))
@@ -65,7 +65,7 @@ func main() {
 		}
 	}()
 
-	// 7. Очікування сигналів ОС для Graceful Shutdown
+	// Очікування сигналів ОС для Graceful Shutdown
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
 
@@ -77,7 +77,7 @@ func main() {
 	case sig := <-shutdown:
 		logger.Info("Shutdown signal received", slog.String("signal", sig.String()))
 
-		// Даємо до 5 секунд на завершення активних HTTP-запитів
+		// До 5 секунд дається на завершення активних HTTP-запитів
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
